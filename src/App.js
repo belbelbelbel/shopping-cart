@@ -1,23 +1,52 @@
-import logo from './logo.svg';
 import './App.css';
-
+import { NavBar } from './components/NavBar';
+import { Cart } from './components/Cart';
+import { Amazon } from './components/Amazon';
+import { useState } from 'react';
+import "./Styles/Amazon.css"
 function App() {
+  const handleclick = (item) => {
+    if (cart.some((product) => product.id === item.id)) {
+      setwarning(true);
+      setTimeout(() => {
+        setwarning(false);
+      }, 2000);
+    } else {
+      setcart([...cart, item]);
+    }
+  };
+  const handlechange = (item,d) => {
+    let ind = -1
+    cart.forEach((items,index) =>{
+      if(items.id === item.id) {
+        ind = index;
+      }
+    })
+    if(ind !== -1) {
+      cart[ind].amount += d;
+    }
+    if (cart[ind].amount < 1) {
+      cart[ind].amount = 1;
+    }
+    setcart([...cart])
+  }
+  const [show,setshow] = useState(true)
+  const [cart,setcart] = useState([])
+  const [warning,setwarning] = useState(false)
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <NavBar size={cart.length} setshow={setshow}/>
+  
+   
+      {
+        warning && <div className='warning'>already added to the list</div>
+      }
+
+      {
+        show ?     <Amazon handleclick={handleclick}/> :    <Cart setshow={setshow} cart={cart} setcart={setcart} handlechange={handlechange}/>
+      }
     </div>
   );
 }
